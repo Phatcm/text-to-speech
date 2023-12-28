@@ -8,10 +8,6 @@ variable "region" {
   type = string
 }
 
-variable "profile" {
-  type = string
-}
-
 #s3 configure
 variable "s3_organize_bucket" {
   type = string
