@@ -1,9 +1,4 @@
-data "aws_iam_role" "existing"{
-    name = var.iam_role_name
-}
-
 resource "aws_iam_role" "iam_role" {
-    count = data.aws_iam_role.existing.id != null ? 0 : 1
     name = var.iam_role_name
     assume_role_policy = <<EOF
 {
@@ -24,6 +19,6 @@ resource "aws_iam_role" "iam_role" {
 resource "aws_iam_role_policy_attachment" "iam_role_policies" {
   for_each = toset(var.policies_list)
 
-  role = aws_iam_role.iam_role[0].name
+  role = aws_iam_role.iam_role.name
   policy_arn = each.value
 }

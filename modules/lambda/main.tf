@@ -1,7 +1,3 @@
-data "aws_lambda_function" "existing" {
-  function_name = var.lambda_function_name
-}
-
 data "archive_file" "lambda_zip" {
   type = "zip"
   output_path = var.output_path
@@ -9,7 +5,6 @@ data "archive_file" "lambda_zip" {
 }
 
 resource "aws_lambda_function" "lambda_function" {
-    count = data.aws_lambda_function.existing.function_name != null ? 0 : 1
     filename = var.filename
     function_name = var.lambda_function_name
     role = var.lambda_role_arn
