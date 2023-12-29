@@ -34,7 +34,7 @@ variable "policies_list" {
 #lambda 
 variable "lambda_uploader_function_name" {
   type = string
-  default = "tts-lambda"
+  default = "tts-function"
 }
 
 variable "lambda_handler" {
