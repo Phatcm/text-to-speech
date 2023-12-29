@@ -31,7 +31,7 @@ module "lambda" {
   output_path = var.lambda_uploader_output_path
   source_dir = var.lambda_uploader_source_dir
   filename = var.lambda_uploader_filename
-  s3_bucket_name = var.s3_bucket_name
+  s3_bucket_name = var.s3_organize_bucket
 }
 
 module "api_gateway" {
