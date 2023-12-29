@@ -47,7 +47,7 @@ def generateAudioUsingText(text, bucket_name):
             audio_data = response['AudioStream'].read()
             
             # Append the chunk name to the list
-            chunks_list.append(f"{file_name}({i})")
+            chunks_list.append(f"{folder_name}/({i}){file_name}")
             
             # Upload the audio data to S3
             s3.put_object(Bucket=bucket_name, Key=f"{folder_name}/({i}){file_name}", Body=audio_data)
