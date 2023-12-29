@@ -12,7 +12,7 @@ variable "region" {
 #s3 configure
 variable "s3_organize_bucket" {
   type = string
-  default = "s3-tts"
+  default = "s3-text-to-speech-filesave"
 }
 
 #iam configure
