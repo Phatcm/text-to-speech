@@ -49,7 +49,7 @@ def generateAudioUsingText(text, bucket_name):
             chunks_list.append(f"{file_name}({i})")
             
             # Upload the audio data to S3
-            s3.put_object(Bucket=bucket_name, Key=f"{file_name}({i})", Body=audio_data)
+            s3.put_object(Bucket=bucket_name, Key=f"{file_name}/({i}){file_name}", Body=audio_data)
         
         return chunks_list # Return the list of chunks
     except Exception as e:
