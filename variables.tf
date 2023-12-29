@@ -27,7 +27,7 @@ variable "policies_list" {
     "arn:aws:iam::aws:policy/AmazonAPIGatewayInvokeFullAccess",
     "arn:aws:iam::aws:policy/AmazonS3FullAccess",
     "arn:aws:iam::aws:policy/CloudWatchFullAccess",
-    "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+    "arn:aws:iam::aws:policy/AmazonPollyFullAccess"
   ]
 }
 
