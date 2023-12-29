@@ -1,4 +1,9 @@
+data "aws_s3_bucket" "existing" {
+  bucket = var.s3_organize_bucket
+}
+
 resource "aws_s3_bucket" "s3_bucket" {
+  count = data.aws_s3_bucket.existing.id != null ? 0 : 1
   bucket = var.s3_organize_bucket
   tags = {
     Name        = "My bucket"
