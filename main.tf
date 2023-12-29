@@ -13,6 +13,7 @@ provider "aws" {
 module "s3_bucket" {
   source = "./modules/s3"
   s3_organize_bucket = var.s3_organize_bucket
+  lambda_function_arn = module.lambda.lambda_function_arn
 }
 
 
