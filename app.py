@@ -19,8 +19,8 @@ def app():
         response = requests.post("https://xqyl0erqka.execute-api.ap-northeast-1.amazonaws.com/prod", json = {"text":text})
 
         if response.status_code == 200:
-            audio_url = response.text  # Assuming the response.text contains the audio URL
-            media_player(audio_url)
+            list_url = response.text  # Assuming the response.text contains the audio URL
+            st.write(list_url)
 
         else:
             st.write("Error")
