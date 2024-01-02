@@ -3,6 +3,7 @@ import requests
 from moviepy.editor import concatenate_audioclips, AudioFileClip
 import os
 import time
+import tempfile
 
 def media_player(url):
     html = f"""
@@ -23,25 +24,25 @@ def app():
 
         if response.status_code == 200:
             audio_urls = response.json()  # Assuming the response.text contains the audio URL
-            st.write(audio_urls)
 
             audio_clips = []
             for url in audio_urls:
                 audio_data = requests.get(url).content
                 print("Downloaded")
                 
-                # Save the audio data to a temporary file
-                with open('temp.mp3', 'wb') as f:
+                # Create a unique temporary file for this iteration
+                temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
+                temp_file_name = temp_file.name
+
+                # Save the audio data to the temporary file
+                with open(temp_file_name, 'wb') as f:
                     f.write(audio_data)
                     print("Saved")
-                
-                # Wait for the download to complete
-                time.sleep(1)
-                
+
                 # Load the audio file with pydub
-                audio = AudioFileClip('temp.mp3')
+                audio = AudioFileClip(temp_file_name)
                 print("Loaded")
-                
+
                 # Add the audio clip to the list
                 audio_clips.append(audio)
                 
@@ -56,6 +57,7 @@ def app():
             # Close the AudioFileClip objects
             for audio in audio_clips:
                 audio.close()
+                
             
             with open("output.mp3", "rb") as f:
                 st.audio(f.read(), format='audio/mp3')
