@@ -14,13 +14,17 @@ def lambda_handler(event, context):
     text = body["text"]
     user_name = body["name"]
     
-    #define bucket connect
+    #define s3 bucket connect
     bucket_name = os.environ['BUCKET_NAME']
+    
+    #define dynamodb table connect
+    table_name = os.environ['TABLE_NAME']
+    
     # Random name for file chunks
     folder_name = str(uuid.uuid4())
     
     #save in dict format to dynamodb
-    saveInfo(user_name, folder_name)
+    saveInfo(user_name, folder_name, table_name)
     
     response = generateAudioUsingText(text, bucket_name, folder_name)
     urls_list = []
@@ -73,9 +77,9 @@ def generatePresignUrl(file_name, bucket_name):
         print(e)
         return None  # Return None and print the exception
         
-def saveInfo(user_name, folder_name):
+def saveInfo(user_name, folder_name, table_name):
     try:
-        db_table = dynamodb.Table('tts-save')
+        db_table = dynamodb.Table(table_name)
     
         response = db_table.put_item(
             Item={
