@@ -15,6 +15,12 @@ variable "s3_organize_bucket" {
   default = "s3-text-to-speech-filesave"
 }
 
+#dynamodb configure
+variable "dynamodb_table_name" {
+  type = string
+  default = "tts-table"
+}
+
 #iam configure
 variable "iam_role_name" {
   type = string

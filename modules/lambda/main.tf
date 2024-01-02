@@ -17,6 +17,7 @@ resource "aws_lambda_function" "lambda_function" {
     environment {
     variables = {
       BUCKET_NAME = var.s3_bucket_name
+      TABLE_NAME = var.dynamodb_table_name
     }
   }
 }

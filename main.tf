@@ -16,6 +16,11 @@ module "s3_bucket" {
   lambda_function_arn = module.lambda.lambda_function_arn
 }
 
+module "dynomo_db" {
+  source = "./modules/dynamodb"
+  table_name = var.dynamodb_table_name
+}
+
 
 module "iam_role" {
   source = "./modules/iam_role"
@@ -32,7 +37,8 @@ module "lambda" {
   output_path = var.lambda_uploader_output_path
   source_dir = var.lambda_uploader_source_dir
   filename = var.lambda_uploader_filename
-  s3_bucket_name = var.s3_organize_bucket
+  s3_bucket_name = module.s3_bucket.s3_bucket_name
+  dynamodb_table_name = module.dynomo_db.dynamodb_table_name
 }
 
 module "api_gateway" {
