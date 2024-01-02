@@ -7,14 +7,22 @@ from botocore.exceptions import ClientError
 
 polly = boto3.client('polly')
 s3 = boto3.client('s3')
+dynamodb = boto3.resource('dynamodb')
 
 def lambda_handler(event, context):
     body = json.loads(event["body"])
     text = body["text"]
+    user_name = body["name"]
+    
     #define bucket connect
     bucket_name = os.environ['BUCKET_NAME']
+    # Random name for file chunks
+    folder_name = str(uuid.uuid4())
     
-    response = generateAudioUsingText(text, bucket_name)
+    #save in dict format to dynamodb
+    saveInfo(user_name, folder_name)
+    
+    response = generateAudioUsingText(text, bucket_name, folder_name)
     urls_list = []
     for i in response:
         url = generatePresignUrl(i, bucket_name)
@@ -24,13 +32,11 @@ def lambda_handler(event, context):
         'body': json.dumps(urls_list)
     }
 
-def generateAudioUsingText(text, bucket_name):
+def generateAudioUsingText(text, bucket_name, folder_name):
     try:
         # Split the text into chunks of 3000 characters or less
         chunks = [text[i:i+3000] for i in range(0, len(text), 3000)]
         
-        # Random name for file chunks
-        folder_name = str(uuid.uuid4())
         file_name = folder_name+".mp3"
         chunks_list = []
         
@@ -63,6 +69,20 @@ def generatePresignUrl(file_name, bucket_name):
                                                 Params={'Bucket': bucket_name,'Key': file_name},
                                                 ExpiresIn=3600)
         return url  # Return the URL if it is successfully generated
+    except Exception as e:
+        print(e)
+        return None  # Return None and print the exception
+        
+def saveInfo(user_name, folder_name):
+    try:
+        db_table = dynamodb.Table('tts-save')
+    
+        response = db_table.put_item(
+            Item={
+                "user_name": user_name,
+                "file_name": folder_name
+            }
+        )
     except Exception as e:
         print(e)
         return None  # Return None and print the exception

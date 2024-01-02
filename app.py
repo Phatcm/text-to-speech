@@ -5,6 +5,12 @@ import os
 import time
 import tempfile
 
+
+st.set_page_config(
+    page_title = "Home",
+    page_icon = "🌍",
+)
+
 def aggreate_audio(audio_urls):
     audio_clips = []
     for url in audio_urls:
@@ -48,7 +54,8 @@ def app():
         st.write(f'You wrote {len(text)} characters.')
         
         if st.button("Let's speech"):
-            response = requests.post("https://xqyl0erqka.execute-api.ap-northeast-1.amazonaws.com/prod", json = {"text":text})
+            #send name and text to api
+            response = requests.post("https://xqyl0erqka.execute-api.ap-northeast-1.amazonaws.com/prod", json = {"name":name,"text":text})
 
             if response.status_code == 200:
                 audio_urls = response.json()  # Assuming the response.text contains the audio URL
