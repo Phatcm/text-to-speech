@@ -35,9 +35,6 @@ def app():
                     f.write(audio_data)
                     print("Saved")
                 
-                # Wait for the download to complete
-                time.sleep(1)
-                
                 # Load the audio file with pydub
                 audio = AudioFileClip('temp.mp3')
                 print("Loaded")
