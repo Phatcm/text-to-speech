@@ -38,7 +38,11 @@ def app():
                 with open(temp_file_name, 'wb') as f:
                     f.write(audio_data)
                     print("Saved")
+<<<<<<< HEAD
 
+=======
+                
+>>>>>>> ab79f31e6757352c74fb9d0cd8dec8bdf0157fbc
                 # Load the audio file with pydub
                 audio = AudioFileClip(temp_file_name)
                 print("Loaded")
