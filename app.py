@@ -27,7 +27,6 @@ def app():
 
             audio_clips = []
             for url in audio_urls:
-                st.write(url)
                 audio_data = requests.get(url).content
                 print("Downloaded")
                 
@@ -39,22 +38,24 @@ def app():
                 # Wait for the download to complete
                 time.sleep(1)
                 
-                print(os.path.exists('temp.mp3'))
                 # Load the audio file with pydub
                 audio = AudioFileClip('temp.mp3')
                 print("Loaded")
                 
-                # Delete the temporary file
-                os.remove('temp.mp3')
-                
                 # Add the audio clip to the list
                 audio_clips.append(audio)
+                
 
             # Merge the audio clip to the list
             merged_audio = concatenate_audioclips(audio_clips)
             print("Merged")
             
+        
             merged_audio.write_audiofile("output.mp3")
+            
+            # Close the AudioFileClip objects
+            for audio in audio_clips:
+                audio.close()
             
             with open("output.mp3", "rb") as f:
                 st.audio(f.read(), format='audio/mp3')
