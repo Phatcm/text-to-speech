@@ -4,6 +4,7 @@ from moviepy.editor import concatenate_audioclips, AudioFileClip
 import os
 import time
 import tempfile
+import base64
 
 
 st.set_page_config(
@@ -65,7 +66,9 @@ def app():
                 
                 # Play the audio file
                 with open("output.mp3", "rb") as f:
-                    st.audio(f.read(), format='audio/mp3')
+                    audio_file = f.read()
+                    st.audio(audio_file, format='audio/mpeg')
+                    
             else:
                 st.write("Error")
                 st.write(response.text)

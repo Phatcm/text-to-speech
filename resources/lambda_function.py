@@ -10,31 +10,60 @@ s3 = boto3.client('s3')
 dynamodb = boto3.resource('dynamodb')
 
 def lambda_handler(event, context):
-    body = json.loads(event["body"])
-    text = body["text"]
-    user_name = body["name"]
+    httpMethod = event['httpMethod']
     
     #define s3 bucket connect
     bucket_name = os.environ['BUCKET_NAME']
-    
     #define dynamodb table connect
     table_name = os.environ['TABLE_NAME']
     
-    # Random name for file chunks
-    folder_name = str(uuid.uuid4())
-    
-    #save in dict format to dynamodb
-    saveInfo(user_name, folder_name, table_name)
-    
-    response = generateAudioUsingText(text, bucket_name, folder_name)
-    urls_list = []
-    for i in response:
-        url = generatePresignUrl(i, bucket_name)
-        urls_list.append(url)
-    return {
-        'statusCode': 200,
-        'body': json.dumps(urls_list)
-    }
+    if httpMethod == "POST":
+        body = json.loads(event["body"])
+        text = body["text"]
+        user_name = body["name"]
+        
+        # Random name for file chunks
+        folder_name = str(uuid.uuid4())
+        
+        #save in dict format to dynamodb
+        saveInfo(user_name, folder_name, table_name)
+        
+        response = generateAudioUsingText(text, bucket_name, folder_name)
+        urls_list = []
+        for i in response:
+            url = generatePresignUrl(i, bucket_name)
+            urls_list.append(url)
+        return {
+            'statusCode': 200,
+            'body': json.dumps(urls_list)
+        }
+        
+    if httpMethod == "GET":
+        if event['queryStringParameters']:
+            file_name = event['queryStringParameters']['download']
+            
+            return {
+                'statusCode': 200,
+                'body': json.dumps(file_name)
+            }
+            
+        else:
+            body = json.loads(event["body"])  # Parse the body for GET method
+            user_name = body["name"]
+            
+            db_table = dynamodb.Table(table_name)
+            # Query the DynamoDB table
+            response = db_table.query(
+                KeyConditionExpression=boto3.dynamodb.conditions.Key('user_name').eq(user_name)
+            )
+            
+            # Extract the file_name from the response
+            file_names = [item['file_name'] for item in response['Items']]
+            
+            return {
+                'statusCode': 200,
+                'body': json.dumps(file_names)
+            }
 
 def generateAudioUsingText(text, bucket_name, folder_name):
     try:
