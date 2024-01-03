@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 import json
+from tts import aggreate_audio
 
 def getFiles(name):
     response = requests.get("https://xqyl0erqka.execute-api.ap-northeast-1.amazonaws.com/prod", json = {"name":name})
@@ -32,9 +33,16 @@ def app():
                 download_url = "{}?download={}".format(api_base_url, file_name)
                 response = requests.get(download_url)
                 if response.status_code == 200:
-                    st.write(response.text)
+                    audio_urls = response.json()  # Assuming the response.text contains the audio URL
+                
+                    # Download the audio file and save it to `output.mp3`
+                    aggreate_audio(audio_urls)
+                    
+                    # Play the audio file
+                    with open("output.mp3", "rb") as f:
+                        audio_file = f.read()
+                        st.audio(audio_file, format='audio/mpeg')
                 else:
                     st.write("Error")
                     st.write(response.text)
         
-app()

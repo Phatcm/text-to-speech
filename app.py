@@ -1,76 +1,40 @@
 import streamlit as st
 import requests
-from moviepy.editor import concatenate_audioclips, AudioFileClip
-import os
-import time
-import tempfile
-import base64
+import json
+import sys
 
+from streamlit_option_menu import option_menu
+import tts, your_file
 
 st.set_page_config(
-    page_title = "Home",
-    page_icon = "🌍",
+    page_title = "Text to Speech",
 )
 
-def aggreate_audio(audio_urls):
-    audio_clips = []
-    for url in audio_urls:
-        audio_data = requests.get(url).content
-        print("Downloaded")
+class MultiApp:
+    def __init__(self):
+        self.app=[]
+    def add_app(self, title, function):
+        self.app_append({
+            "title": title,
+            "function": function
+        })
         
-        # Create a unique temporary file for this iteration
-        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
-        temp_file_name = temp_file.name
-
-        # Save the audio data to the temporary file
-        with open(temp_file_name, 'wb') as f:
-            f.write(audio_data)
-            print("Saved")
-        # Load the audio file with pydub
-        audio = AudioFileClip(temp_file_name)
-        print("Loaded")
-
-        # Add the audio clip to the list
-        audio_clips.append(audio)
+    def run():
+        with st.sidebar:
+            app = option_menu(
+                menu_title='Navigator ',
+                options=['Text to Speech','Your files'],
+                icons=['cloud-arrow-up','cloud-arrow-down'],
+                menu_icon='cast',
+                default_index=0,
+                styles={
+                    "container": {"padding": "5!important"},
+                    "icon": {"font-size": "15px"}, 
+                    "nav-link": {"font-size": "13px", "text-align": "left", "margin":"0px"},}
+                )
         
-
-    # Merge the audio clip to the list
-    merged_audio = concatenate_audioclips(audio_clips)
-    print("Merged")
-    
-
-    merged_audio.write_audiofile("output.mp3")
-    
-    # Close the AudioFileClip objects
-    for audio in audio_clips:
-        audio.close()
-
-def app():
-    st.markdown("<h1 style='text-align: center; color: red;'>My talking app</h1>", unsafe_allow_html=True)
-    
-    # Text input for required name
-    name = st.text_input("What is your name?")
-    if name:
-        text = st.text_area("Input your text")
-        st.write(f'You wrote {len(text)} characters.')
-        
-        if st.button("Let's speech"):
-            #send name and text to api
-            response = requests.post("https://xqyl0erqka.execute-api.ap-northeast-1.amazonaws.com/prod", json = {"name":name,"text":text})
-
-            if response.status_code == 200:
-                audio_urls = response.json()  # Assuming the response.text contains the audio URL
-                
-                # Download the audio file and save it to `output.mp3`
-                aggreate_audio(audio_urls)
-                
-                # Play the audio file
-                with open("output.mp3", "rb") as f:
-                    audio_file = f.read()
-                    st.audio(audio_file, format='audio/mpeg')
-                    
-            else:
-                st.write("Error")
-                st.write(response.text)
-app()
-
+        if app== "Text to Speech":
+            tts.app()
+        if app== "Your files":
+            your_file.app()
+    run()
