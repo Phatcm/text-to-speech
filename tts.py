@@ -49,10 +49,12 @@ def app():
         
         if st.button("Let's speech"):
             #Get the current date and time
-            current_time = datetime.datetime.now().isoformat()
+            current_time = datetime.datetime.now()
+            # Format the current time
+            formatted_time = current_time.strftime("%d/%m/%Y - %H:%M")
             
             # Send name, text, and current time to API
-            response = requests.post("https://xqyl0erqka.execute-api.ap-northeast-1.amazonaws.com/prod", json = {"name":name,"text":text, "time":current_time})
+            response = requests.post("https://xqyl0erqka.execute-api.ap-northeast-1.amazonaws.com/prod", json = {"name":name,"text":text, "time":formatted_time})
 
             if response.status_code == 200:
                 audio_urls = response.json()  # Assuming the response.text contains the audio URL

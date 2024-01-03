@@ -50,6 +50,7 @@ def lambda_handler(event, context):
             
             file_names = [item['Key'] for item in response['Contents']]
             
+            urls_list = []
             for file in file_names:
                 url = generatePresignUrl(file, bucket_name)
                 urls_list.append(url)
@@ -70,11 +71,11 @@ def lambda_handler(event, context):
             )
             
             # Extract the file_name from the response
-            file_names = [item['file_name'] for item in response['Items']]
+            file_data = [{'file_name': item['file_name'], 'upload_time': item['upload_time']} for item in response['Items']]
             
             return {
                 'statusCode': 200,
-                'body': json.dumps(file_names)
+                'body': json.dumps(file_data)
             }
 
 def generateAudioUsingText(text, bucket_name, folder_name):
