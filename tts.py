@@ -3,6 +3,7 @@ import requests
 from moviepy.editor import concatenate_audioclips, AudioFileClip
 import datetime
 import tempfile
+import pytz
 
 
 def aggreate_audio(audio_urls):
@@ -48,8 +49,10 @@ def app():
         st.write(f'You wrote {len(text)} characters.')
         
         if st.button("Let's speech"):
+            # Create a timezone object for GMT+7
+            timezone = pytz.timezone("Etc/GMT-7")
             #Get the current date and time
-            current_time = datetime.datetime.now()
+            current_time = datetime.datetime.now(timezone)
             # Format the current time
             formatted_time = current_time.strftime("%Y-%m-%d %H:%M")
             
