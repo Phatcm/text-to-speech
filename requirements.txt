@@ -13,3 +13,4 @@ requests==2.31.0
 setuptools==58.1.0
 tqdm==4.66.1
 urllib3==2.1.0
+streamlit-option-menu==0.3.6
