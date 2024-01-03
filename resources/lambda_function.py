@@ -40,11 +40,22 @@ def lambda_handler(event, context):
         
     if httpMethod == "GET":
         if event['queryStringParameters']:
-            file_name = event['queryStringParameters']['download']
+            folder_name = event['queryStringParameters']['download']
             
+            response = s3.list_objects_v2(
+                Bucket=os.environ['BUCKET_NAME'], 
+                Prefix=folder_name+"/"
+            )
+            
+            file_names = [item['Key'] for item in response['Contents']]
+            
+            for file in file_names:
+                url = generatePresignUrl(file, bucket_name)
+                urls_list.append(url)
+                
             return {
                 'statusCode': 200,
-                'body': json.dumps(file_name)
+                'body': json.dumps(urls_list)
             }
             
         else:
