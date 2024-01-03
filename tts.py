@@ -1,10 +1,8 @@
 import streamlit as st
 import requests
 from moviepy.editor import concatenate_audioclips, AudioFileClip
-import os
-import time
+import datetime
 import tempfile
-import base64
 
 
 def aggreate_audio(audio_urls):
@@ -50,8 +48,11 @@ def app():
         st.write(f'You wrote {len(text)} characters.')
         
         if st.button("Let's speech"):
-            #send name and text to api
-            response = requests.post("https://xqyl0erqka.execute-api.ap-northeast-1.amazonaws.com/prod", json = {"name":name,"text":text})
+            #Get the current date and time
+            current_time = datetime.datetime.now().isoformat()
+            
+            # Send name, text, and current time to API
+            response = requests.post("https://xqyl0erqka.execute-api.ap-northeast-1.amazonaws.com/prod", json = {"name":name,"text":text, "time":current_time})
 
             if response.status_code == 200:
                 audio_urls = response.json()  # Assuming the response.text contains the audio URL

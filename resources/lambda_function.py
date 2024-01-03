@@ -21,12 +21,13 @@ def lambda_handler(event, context):
         body = json.loads(event["body"])
         text = body["text"]
         user_name = body["name"]
+        upload_time = body["time"]
         
         # Random name for file chunks
         folder_name = str(uuid.uuid4())
         
         #save in dict format to dynamodb
-        saveInfo(user_name, folder_name, table_name)
+        saveInfo(user_name, folder_name, upload_time, table_name)
         
         response = generateAudioUsingText(text, bucket_name, folder_name)
         urls_list = []
@@ -117,14 +118,15 @@ def generatePresignUrl(file_name, bucket_name):
         print(e)
         return None  # Return None and print the exception
         
-def saveInfo(user_name, folder_name, table_name):
+def saveInfo(user_name, folder_name, upload_time, table_name):
     try:
         db_table = dynamodb.Table(table_name)
     
         response = db_table.put_item(
             Item={
                 "user_name": user_name,
-                "file_name": folder_name
+                "file_name": folder_name,
+                "upload_time": upload_time
             }
         )
     except Exception as e:
